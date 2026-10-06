@@ -39,9 +39,9 @@ const images = {
   prestigio:
     "/bolo6.jpeg",
   burger:
-    "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&w=900&q=85",
+    "/bolo de pote.jpeg",
   brownie:
-    "https://images.unsplash.com/photo-1564355808539-22fda35bed7e?auto=format&fit=crop&w=900&q=85",
+    "/doces.jpeg",
 };
 
 const products = [
@@ -87,20 +87,32 @@ const products = [
     description: "Coco e chocolate em uma combinação clássica.",
   },
   {
-    id: 6,
-    name: "Brigadeiro",
-    category: "Bolo de pote",
-    price: 25.9,
-    image: images.burger,
-    description: "Hambúrguer artesanal, bacon, queijo e molho da casa.",
-  },
+  id: 6,
+  name: "Bolo de pote",
+  category: "Bolo de pote",
+  price: 12.9,
+  image: images.burger,
+  description: "Escolha o sabor, a massa e a quantidade do seu bolo de pote.",
+  sabores: [
+    "Brigadeiro",
+    "Ninho",
+    "Ninho com morango",
+    "Prestígio",
+    "Doce de leite",
+  ],
+  massas: [
+    "Chocolate",
+    "Branca",
+    "Cenoura",
+  ],
+},
   {
     id: 7,
-    name: "Brownie Gourmet",
+    name: "Brigadeiros tradicionais e gourmet",
     category: "Doces",
     price: 8.5,
     image: images.brownie,
-    description: "Brownie intenso de chocolate com casquinha crocante.",
+    
   },
 ];
 
@@ -168,7 +180,7 @@ function Header({ dark, setDark }) {
         borderColor: CORES.borda,
       }}
     >
- <div className="mx-auto flex max-w-[1600px] items-center justify-between px-1 py-4 lg:px-2">
+ <div className="mx-auto flex max-w-[1600px] items-center justify-between px-2 py-4 lg:px-10">
         <Logo />
 
         <nav className="hidden items-center  gap-10 md:flex">
@@ -502,7 +514,19 @@ function MenuSection({ products, onOpen }) {
 }
 
 function ProductModal({ product, onClose }) {
+  const [sabor, setSabor] = useState("");
+  const [massa, setMassa] = useState("");
+  const [quantidade, setQuantidade] = useState(1);
+
+  useEffect(() => {
+    setSabor(product?.sabores?.[0] || "");
+    setMassa(product?.massas?.[0] || "");
+    setQuantidade(1);
+  }, [product]);
+
   if (!product) return null;
+
+  const total = product.price * quantidade;
 
   return (
     <div
@@ -550,6 +574,135 @@ function ProductModal({ product, onClose }) {
             >
               {product.description}
             </p>
+
+            {product.category === "Bolo de pote" && (
+  <div className="mt-6 space-y-5">
+
+    <div>
+      <p
+        className="mb-2 text-sm font-bold"
+        style={{ color: CORES.azulEscuro }}
+      >
+        Sabor
+      </p>
+
+      <div className="flex flex-wrap gap-2">
+        {product.sabores?.map((item) => (
+          <button
+            key={item}
+            onClick={() => setSabor(item)}
+            className="rounded-xl border px-4 py-2 text-sm"
+            style={{
+              background:
+                sabor === item ? CORES.coral : "#FFFFFF",
+              color:
+                sabor === item ? "#FFFFFF" : CORES.azulEscuro,
+              borderColor:
+                sabor === item ? CORES.coral : CORES.borda,
+            }}
+          >
+            {item}
+          </button>
+        ))}
+      </div>
+    </div>
+
+    <div>
+      <p
+        className="mb-2 text-sm font-bold"
+        style={{ color: CORES.azulEscuro }}
+      >
+        Massa
+      </p>
+
+      <div className="flex flex-wrap gap-2">
+        {product.massas?.map((item) => (
+          <button
+            key={item}
+            onClick={() => setMassa(item)}
+            className="rounded-xl border px-4 py-2 text-sm"
+            style={{
+              background:
+                massa === item ? CORES.coral : "#FFFFFF",
+              color:
+                massa === item ? "#FFFFFF" : CORES.azulEscuro,
+              borderColor:
+                massa === item ? CORES.coral : CORES.borda,
+            }}
+          >
+            {item}
+          </button>
+        ))}
+      </div>
+    </div>
+
+    <div
+  className="grid gap-4 rounded-2xl border p-4 sm:grid-cols-[1fr_auto] sm:items-center"
+  style={{
+    background: CORES.azulClaro,
+    borderColor: CORES.borda,
+  }}
+>
+  <div>
+    <p
+      className="text-xs"
+      style={{ color: "#5C8183" }}
+    >
+      Valor estimado
+    </p>
+
+    <p
+      className="mt-1 text-2xl font-bold"
+      style={{ color: CORES.azulEscuro }}
+    >
+      {money(total)}
+    </p>
+
+    <p
+      className="mt-1 text-xs"
+      style={{ color: "#6B8B8D" }}
+    >
+      {quantidade} unidade{quantidade > 1 ? "s" : ""} ·{" "}
+      {sabor} · {massa}
+    </p>
+  </div>
+
+  <div className="flex items-center gap-3">
+    <button
+      onClick={() =>
+        setQuantidade((q) => Math.max(1, q - 1))
+      }
+      className="rounded-xl border p-2"
+      style={{
+        borderColor: CORES.borda,
+        color: CORES.azulEscuro,
+      }}
+    >
+      <Minus size={18} />
+    </button>
+
+    <span
+      className="min-w-[30px] text-center font-bold"
+      style={{ color: CORES.azulEscuro }}
+    >
+      {quantidade}
+    </span>
+
+    <button
+      onClick={() => setQuantidade((q) => q + 1)}
+      className="rounded-xl border p-2"
+      style={{
+        borderColor: CORES.borda,
+        color: CORES.azulEscuro,
+      }}
+    >
+      <Plus size={18} />
+    </button>
+  </div>
+</div>
+
+  </div>
+)}
 
            
 
